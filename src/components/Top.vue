@@ -1,31 +1,88 @@
 <template>
-    <v-container class="mx-10 text-center" >
+    <v-container>
         <input-form
             formRounded="xl"
             :formElevation="formElevation"
             @storeMovie="storeMovie"
+        />
+        <v-messages
+            :value="responseError"
+            color="red"
+            class="response-error my-5 text-center"
+        >
+        </v-messages>
+        <movies
+            ref="movies"
+            :movie-items="movieItems"
+            :loading="loading"
         />
     </v-container>
 </template>
 
 <script>
     import InputForm from './InputForm.vue'
+    import Movies from './Movies.vue'
+    import axios from 'axios'
 
     export default {
         name: 'Top',
         components: {
             InputForm,
+            Movies
         },
         data () {
             return {
                 formElevation: "10",
+                movieItems: [{}],
+                responseError: [],
+                loading: true,
             }
         },
 
+        created() {
+            this.getMovies()
+        },
+
         methods: {
+            getMovies() {
+                axios.get('https://youtube-curation.herokuapp.com/rest/1'
+                ).then((response) => {
+                    this.movieItems = response.data.user.movies
+                }).catch((error) => {
+                    console.log(error)
+                    this.responseError = ['動画の取得に失敗しました']
+                }).finally(() => {
+                    setTimeout(() => {
+                        this.loading = false
+                    }, 1000)
+                    this.$refs.movies.init()
+                })
+            },
             storeMovie (movieUrl, comment) {
                 console.log(movieUrl, comment)
+                this.loading = true
+                this.responseError = []
+                axios.post('https://youtube-curation.herokuapp.com/rest', {
+                    url: movieUrl,
+                    comment: comment,
+                }).then((response) => {
+                    this.movieItems = response.data.movies
+                }).catch((error) => {
+                    console.log(error)
+                    this.responseError = ['動画の投稿に失敗しました']
+                }).finally(() => {
+                    setTimeout(() => {
+                        this.loading = false
+                    }, 1000)
+                    this.$refs.movies.init()
+                })
             },
         },
     }
 </script>
+
+<style>
+    .response-error .v-messages__message {
+        font-size: 18px
+    }
+</style>
