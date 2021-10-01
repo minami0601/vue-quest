@@ -15,6 +15,7 @@
             ref="movies"
             :movie-items="movieItems"
             :loading="loading"
+            @deleteMovie="deleteMovie"
         />
     </v-container>
 </template>
@@ -77,6 +78,23 @@
                     this.$refs.movies.init()
                 })
             },
+            deleteMovie(id) {
+                this.loading = true
+                this.responseError = []
+                axios.delete('https://youtube-curation.herokuapp.com/rest/' + id
+                ).then((response) => {
+                    console.log(response.data.movies)
+                    this.movieItems = response.data.movies
+                }).catch((error) => {
+                    console.log(error)
+                    this.responseError = ['動画の削除に失敗しました']
+                }).finally(() => {
+                    setTimeout(() => {
+                        this.loading = false
+                    }, 1000)
+                    this.$refs.movies.init()
+                })
+            }
         },
     }
 </script>

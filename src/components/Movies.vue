@@ -1,4 +1,5 @@
 <template>
+    <div>
     <v-row>
         <template
             v-if="loading"
@@ -27,22 +28,47 @@
                     md="4"
                     style="text-align: center"
                 >
-                    <div>
+                    <div
+                        style="text-aline: center;"
+                    >
                         <iframe
                             :src="item.url"
                             width="290"
                             height="163.125"
                             frameborder="0"
                         />
-                        <p>{{ item.comment }}</p>
+                        <v-card
+                            draggable
+                            @dragstart="dragMovie(item.id)"
+                            color="blue"
+                            height="50"
+                            width="290"
+                            style="margin:auto"
+                        >
+                            <v-col>
+                                <p
+                                    style="color:white"
+                                >
+                                {{ item.comment }}
+                                </p>
+                            </v-col>
+                        </v-card>
+
                     </div>
                 </v-col>
             </template>
         </template>
     </v-row>
+    <trash
+        :dropped-movie-id="droppedMovieId"
+        @deleteMovie="deleteMovie"
+    />
+    </div>
 </template>
 
 <script>
+    import Trash from './Trash.vue'
+
     export default {
         props: {
             movieItems: {
@@ -55,9 +81,15 @@
                 default: true,
             },
         },
+
+        components: {
+            Trash,
+        },
+
         data () {
             return {
                 movieInternalItems: [],
+                droppedMovieId: 0,
             }
         },
         methods: {
@@ -81,6 +113,12 @@
                     comparison = 1
                 }
                 return comparison
+            },
+            dragMovie(id) {
+                this.droppedMovieId = id
+            },
+            deleteMovie(id) {
+                this.$emit('deleteMovie', id)
             }
         },
     }
