@@ -49,13 +49,13 @@
                 axios.get('https://youtube-curation.herokuapp.com/rest/1'
                 ).then((response) => {
                     this.movieItems = response.data.user.movies
+                    setTimeout(() => {
+                        this.loading = false
+                    }, 1000)
                 }).catch((error) => {
                     console.log(error)
                     this.responseError = ['動画の取得に失敗しました']
                 }).finally(() => {
-                    setTimeout(() => {
-                        this.loading = false
-                    }, 1000)
                     this.$refs.movies.init()
                 })
             },
@@ -68,13 +68,13 @@
                     comment: comment,
                 }).then((response) => {
                     this.movieItems = response.data.movies
+                    setTimeout(() => {
+                        this.loading = false
+                    }, 1000)
                 }).catch((error) => {
                     console.log(error)
                     this.responseError = ['動画の投稿に失敗しました']
                 }).finally(() => {
-                    setTimeout(() => {
-                        this.loading = false
-                    }, 1000)
                     this.$refs.movies.init()
                 })
             },
@@ -85,13 +85,13 @@
                 ).then((response) => {
                     console.log(response.data.movies)
                     this.movieItems = response.data.movies
+                    setTimeout(() => {
+                        this.loading = false
+                    }, 1000)
                 }).catch((error) => {
                     console.log(error)
                     this.responseError = ['動画の削除に失敗しました']
                 }).finally(() => {
-                    setTimeout(() => {
-                        this.loading = false
-                    }, 1000)
                     this.$refs.movies.init()
                 })
             }
